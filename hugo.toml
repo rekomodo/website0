@@ -1,0 +1,29 @@
+baseURL = 'https://jairrs.me'
+languageCode = 'en-us'
+title = 'jairrs.website'
+theme = 'PaperMod'
+
+[params]
+    env = 'production'
+    author = "jairrs"
+    title = "Jair Santana"
+    description = "CS Major @ University | Full-stack & Systems"
+    
+    [params.profileMode]
+        enabled = true
+        title = "Hi, I'm Jair"
+        subtitle = "TODO"
+        imageUrl = "url-to-your-photo.jpg"
+        [[params.profileMode.buttons]]
+            name = "Projects"
+            url = "projects"
+        [[params.profileMode.buttons]]
+            name = "Blog"
+            url = "posts"
+
+    [[params.socialIcons]]
+        name = "github"
+        url = "https://github.com/rekomodo"
+    [[params.socialIcons]]
+        name = "linkedin"
+        url = "https://linkedin.com/in/jairrs"
