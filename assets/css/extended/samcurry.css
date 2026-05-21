@@ -1,0 +1,807 @@
+/* ------------------------------------------------------------------
+   samcurry.net-style override on top of PaperMod
+   ------------------------------------------------------------------ */
+
+:root {
+    --gap: 24px;
+    --content-gap: 18px;
+    --nav-width: 768px;
+    --main-width: 768px;
+    --header-height: 0;
+    --footer-height: 0;
+    --radius: 6px;
+
+    /* light theme (default) */
+    --theme: #ffffff;
+    --entry: #ffffff;
+    --primary: #0a0a0a;
+    --secondary: #525252;
+    --tertiary: #a3a3a3;
+    --content: #1a1a1a;
+    --border: #e5e5e5;
+    --link: #0066cc;
+    --placeholder-bg: #f0f0f0;
+    --placeholder-stripe-a: #f5f5f5;
+    --placeholder-stripe-b: #ececec;
+    color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+    --theme: #171717;
+    --entry: #262626;
+    --primary: #fafafa;
+    --secondary: #a3a3a3;
+    --tertiary: #737373;
+    --content: #d4d4d4;
+    --border: #262626;
+    --link: #93c5fd;
+    --placeholder-bg: #262626;
+    --placeholder-stripe-a: #1f1f1f;
+    --placeholder-stripe-b: #2a2a2a;
+    color-scheme: dark;
+}
+
+/* Match prefers-color-scheme when no explicit theme is set */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --theme: #171717;
+        --entry: #262626;
+        --primary: #fafafa;
+        --secondary: #a3a3a3;
+        --tertiary: #737373;
+        --content: #d4d4d4;
+        --border: #262626;
+        --link: #93c5fd;
+        --placeholder-bg: #262626;
+        --placeholder-stripe-a: #1f1f1f;
+        --placeholder-stripe-b: #2a2a2a;
+        color-scheme: dark;
+    }
+}
+
+/* Force body and the `.list` body class (PaperMod adds it on list pages)
+   to share the same background as the header — eliminates the gray
+   "banner" look on the home/section pages. */
+html,
+body,
+body.list {
+    background: var(--theme) !important;
+    color: var(--content);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue",
+        Helvetica, Arial, "Liberation Sans", sans-serif;
+    font-size: 17px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Sam Curry's body padding — pushes the title row "below the usual
+   header line" since there is no fixed header bar. */
+body {
+    padding-top: 64px;
+    padding-bottom: 64px;
+}
+
+@media (max-width: 600px) {
+    body {
+        padding-top: 48px;
+        padding-bottom: 48px;
+    }
+}
+
+/* The PaperMod scroll-to-top stack uses --header-height to compute min-height;
+   make sure the main column still fills the viewport even now that the
+   header bar is gone. */
+.main {
+    min-height: 0;
+    max-width: calc(var(--main-width) + var(--gap) * 2);
+    padding: 0 var(--gap);
+    margin: 0 auto;
+}
+
+/* ----------------------- Inline title bar (header) --------------------- */
+
+/* Center the title row in the SAME column as the post list so it sits
+   directly above the posts. Without this it stretched to the body's
+   full width and looked like a misaligned banner. */
+.site-head {
+    max-width: calc(var(--main-width) + var(--gap) * 2);
+    margin: 0 auto 32px;
+    padding: 0 var(--gap);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    line-height: 1.4;
+    flex-wrap: wrap;
+}
+
+.site-head-title,
+.site-head-link {
+    line-height: 1.4;
+    padding-bottom: 1px;
+}
+
+.site-head-icon {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    overflow: hidden;
+    line-height: 0;
+}
+
+.site-head-icon img {
+    width: 32px;
+    height: 32px;
+    display: block;
+}
+
+.site-head-icon--placeholder {
+    background: linear-gradient(135deg, #1f2937 0%, #4b5563 100%);
+}
+
+[data-theme="dark"] .site-head-icon--placeholder {
+    background: linear-gradient(135deg, #d4d4d4 0%, #737373 100%);
+}
+
+.site-head-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: -0.015em;
+    text-decoration: none;
+}
+
+.site-head-title:hover {
+    color: var(--secondary);
+}
+
+.site-head-nav {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-left: 4px;
+}
+
+.site-head-link {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--tertiary);
+    text-decoration: none;
+}
+
+.site-head-link:hover {
+    color: var(--secondary);
+}
+
+.site-head-link.active {
+    font-weight: 600;
+    color: var(--secondary);
+}
+
+/* Theme toggle pinned to the far right of the title row */
+.site-head-toggle {
+    margin-left: auto;
+    background: transparent;
+    border: none;
+    color: var(--secondary);
+    cursor: pointer;
+    padding: 6px;
+    line-height: 0;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.site-head-toggle:hover {
+    color: var(--primary);
+    background: var(--border);
+}
+
+.site-head-toggle .icon-sun,
+.site-head-toggle .icon-moon {
+    display: none;
+}
+
+[data-theme="light"] .site-head-toggle .icon-moon { display: block; }
+[data-theme="dark"]  .site-head-toggle .icon-sun  { display: block; }
+
+/* PaperMod still emits a placeholder space for the .header partial
+   container; ensure we don't get any leftover decoration. */
+.header {
+    border: none;
+    background: transparent;
+}
+.header,
+.nav {
+    display: contents;
+}
+
+/* ------------------------ Post list (home/blog) ------------------------ */
+
+/* No border-top on the list itself — that produced the "bar above the
+   top post". Lines only appear between consecutive entries, like
+   samcurry's Tailwind `divide-y`, plus a closing line below the last. */
+.post-list {
+    border-top: none;
+    border-bottom: 1px solid var(--border);
+}
+
+.post-entry {
+    position: relative;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    margin: 0;
+    transition: none;
+}
+
+.post-entry + .post-entry {
+    border-top: 1px solid var(--border);
+}
+
+.post-entry:active {
+    transform: none;
+}
+
+.post-entry-link {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    padding: 20px 0;
+    color: inherit;
+    text-decoration: none;
+    box-shadow: none;
+}
+
+.post-entry-cover {
+    flex-shrink: 0;
+    width: 168px;
+    height: 108px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--placeholder-bg);
+    position: relative;
+}
+
+.post-entry-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 300ms ease;
+}
+
+.post-entry-link:hover .post-entry-cover img {
+    transform: scale(1.05);
+}
+
+/* Subtle decorative gradient when no cover image is set */
+.post-entry-cover--placeholder {
+    background:
+        linear-gradient(135deg, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.10) 100%),
+        repeating-linear-gradient(45deg,
+            var(--placeholder-stripe-a) 0 8px,
+            var(--placeholder-stripe-b) 8px 16px);
+}
+
+[data-theme="dark"] .post-entry-cover--placeholder {
+    background:
+        linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.08) 100%),
+        repeating-linear-gradient(45deg,
+            var(--placeholder-stripe-a) 0 8px,
+            var(--placeholder-stripe-b) 8px 16px);
+}
+
+.post-entry-body {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.post-entry-title {
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--primary);
+    margin: 0;
+    letter-spacing: -0.005em;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.post-entry-link:hover .post-entry-title {
+    color: var(--secondary);
+}
+
+.post-entry-meta {
+    font-size: 13px;
+    color: var(--tertiary);
+    margin: 0;
+    line-height: 1.4;
+}
+
+.post-entry-meta span {
+    color: inherit;
+}
+
+.post-entry-summary {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--secondary);
+    margin: 0;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+@media (max-width: 600px) {
+    .post-entry-link {
+        gap: 14px;
+        padding: 16px 0;
+    }
+    .post-entry-cover {
+        width: 110px;
+        height: 78px;
+    }
+    .post-entry-title {
+        font-size: 16px;
+    }
+}
+
+/* ----------------------- Section-page header & content ----------------- */
+
+.page-header {
+    margin: 0 0 24px 0;
+}
+
+.page-header h1 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.01em;
+}
+
+.post-description {
+    margin-top: 4px;
+    color: var(--secondary);
+    font-size: 15px;
+}
+
+/* ------------------------------ Pagination ----------------------------- */
+
+.page-footer {
+    margin-top: 28px;
+}
+
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: none;
+    padding-top: 8px;
+}
+
+.pagination a,
+.pagination .prev,
+.pagination .next {
+    color: var(--primary);
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.4;
+    text-decoration: none;
+}
+
+.pagination .disabled {
+    color: var(--tertiary);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.pagination a:hover {
+    color: var(--secondary);
+}
+
+.page-count {
+    font-size: 12px;
+    color: var(--tertiary);
+    font-variant-numeric: tabular-nums;
+}
+
+/* -------------------------------- Footer ------------------------------- */
+
+.footer {
+    max-width: calc(var(--main-width) + var(--gap) * 2);
+    margin: 56px auto 0;
+    padding: 0 var(--gap);
+    color: var(--tertiary);
+    font-size: 13px;
+    text-align: left;
+    border-top: none;
+    background: transparent;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 18px;
+}
+
+.footer-links a,
+.footer a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--tertiary);
+    text-decoration: none;
+    border-bottom: none;
+    transition: color 150ms ease;
+}
+
+.footer-links a:hover,
+.footer-links a:focus,
+.footer a:hover {
+    color: var(--secondary);
+    text-decoration: none;
+    border-bottom: none;
+}
+
+.footer-icon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    display: inline-block;
+}
+
+/* ------------------------- Single post page ---------------------------- */
+
+.post-single,
+.post-header {
+    background: transparent;
+}
+
+/* ---- Fixed sidebar: site nav + TOC (xl screens only) ---- */
+
+.post-aside {
+    display: none;
+}
+
+@media (min-width: 1280px) {
+    .post-aside {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        position: fixed;
+        top: 64px;
+        left: calc(50% - var(--main-width) / 2 - 224px);
+        width: 200px;
+        max-height: calc(100vh - 128px);
+        overflow-y: auto;
+        font-size: 13px;
+        line-height: 1.4;
+    }
+}
+
+.post-aside-home {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--secondary);
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 150ms ease;
+}
+
+.post-aside-home:hover {
+    color: var(--primary);
+}
+
+.post-aside-icon {
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.post-aside-icon img {
+    width: 20px;
+    height: 20px;
+    display: block;
+}
+
+.post-aside-icon--placeholder {
+    background: linear-gradient(135deg, #1f2937 0%, #4b5563 100%);
+}
+
+[data-theme="dark"] .post-aside-icon--placeholder {
+    background: linear-gradient(135deg, #d4d4d4 0%, #737373 100%);
+}
+
+.post-aside-toc {
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+}
+
+/* Hugo's .TableOfContents emits <nav id="TableOfContents"><ul><li>... */
+#TableOfContents,
+#TableOfContents ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#TableOfContents li {
+    padding: 2px 0;
+    line-height: 1.4;
+}
+
+#TableOfContents ul ul li {
+    padding-left: 12px;
+}
+
+#TableOfContents a {
+    color: var(--tertiary);
+    text-decoration: none;
+    font-weight: 300;
+    border-bottom: none;
+    display: block;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color 150ms ease;
+}
+
+#TableOfContents a:hover,
+#TableOfContents a.active {
+    color: var(--primary);
+}
+
+/* ---- "Back to blog" link (mobile fallback for the sidebar) ---- */
+
+.post-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 24px;
+    color: var(--secondary);
+    text-decoration: none;
+    border-bottom: none;
+    font-size: 14px;
+    transition: color 150ms ease;
+}
+
+.post-back-link:hover {
+    color: var(--primary);
+    border-bottom: none;
+}
+
+.post-back-link svg {
+    flex-shrink: 0;
+}
+
+@media (min-width: 1280px) {
+    .post-back-link {
+        display: none;
+    }
+}
+
+/* ---- Article header ---- */
+
+.post-header {
+    margin: 0 0 32px 0;
+}
+
+.post-title {
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    margin: 0 0 8px 0;
+    color: var(--primary);
+}
+
+.post-date {
+    font-size: 14px;
+    color: var(--tertiary);
+}
+
+.post-description {
+    margin-top: 12px;
+    color: var(--secondary);
+    font-size: 16px;
+    line-height: 1.55;
+}
+
+/* Suppress PaperMod's default post_meta inside post header */
+.post-single .post-meta,
+.post-single .breadcrumbs {
+    display: none;
+}
+
+/* ---- Cover image at the top of the article ---- */
+
+.post-single .entry-cover {
+    margin: 0 0 32px 0;
+    text-align: left;
+}
+
+.post-single .entry-cover img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    display: block;
+}
+
+.post-single .entry-cover figcaption {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--tertiary);
+    text-align: left;
+}
+
+/* ---- Prose content ---- */
+
+.post-content {
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--content);
+    word-wrap: break-word;
+}
+
+.post-content > * + * {
+    margin-top: 1em;
+}
+
+.post-content p {
+    margin: 0 0 1em 0;
+}
+
+.post-content h1,
+.post-content h2,
+.post-content h3,
+.post-content h4 {
+    color: var(--primary);
+    line-height: 1.3;
+    margin: 2em 0 0.6em 0;
+    letter-spacing: -0.01em;
+}
+
+.post-content h1 { font-size: 28px; font-weight: 700; }
+.post-content h2 { font-size: 24px; font-weight: 700; }
+.post-content h3 { font-size: 20px; font-weight: 600; }
+.post-content h4 { font-size: 18px; font-weight: 600; }
+
+.post-content a {
+    color: var(--primary);
+    text-decoration: underline;
+    text-decoration-color: var(--tertiary);
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+    box-shadow: none;
+    transition: text-decoration-color 150ms ease, color 150ms ease;
+}
+
+.post-content a:hover {
+    color: var(--primary);
+    text-decoration-color: var(--primary);
+    box-shadow: none;
+}
+
+.post-content blockquote {
+    border-inline-start: 3px solid var(--border);
+    color: var(--secondary);
+    margin: 1.4em 0;
+    padding: 0 1.2em;
+}
+
+.post-content ul,
+.post-content ol {
+    padding-inline-start: 1.5em;
+    margin: 1em 0;
+}
+
+.post-content li {
+    margin: 0.3em 0;
+}
+
+.post-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    display: block;
+    margin: 1.2em auto;
+}
+
+.post-content hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2em 0;
+}
+
+/* inline code */
+.post-content code:not(pre code) {
+    background: var(--entry);
+    color: var(--primary);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.92em;
+}
+
+/* code blocks */
+.post-content pre {
+    background: var(--entry);
+    color: var(--content);
+    padding: 14px 16px;
+    border-radius: var(--radius);
+    overflow-x: auto;
+    font-size: 14px;
+    line-height: 1.55;
+    margin: 1.2em 0;
+    border: 1px solid var(--border);
+}
+
+.post-content pre code {
+    background: transparent;
+    padding: 0;
+    color: inherit;
+    font-size: inherit;
+    border-radius: 0;
+}
+
+/* anchor permalinks emitted by anchored_headings.html */
+.post-content .anchor {
+    color: var(--tertiary);
+    text-decoration: none;
+    border-bottom: none;
+    margin-inline-start: 6px;
+    opacity: 0;
+    transition: opacity 150ms ease;
+}
+
+.post-content h2:hover .anchor,
+.post-content h3:hover .anchor,
+.post-content h4:hover .anchor {
+    opacity: 1;
+}
+
+/* Hide the home_info block since we configured an empty one */
+.home-info,
+.first-entry {
+    display: none;
+}
+
+/* -------------------------------- Misc --------------------------------- */
+
+::selection {
+    background: var(--primary);
+    color: var(--theme);
+}
+
+@media (max-width: 600px) {
+    html, body { font-size: 16px; }
+    .site-head-title { font-size: 20px; }
+    .site-head-link { font-size: 14px; }
+    .post-title { font-size: 26px; }
+}

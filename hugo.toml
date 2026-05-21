@@ -1,25 +1,51 @@
-baseURL = 'https://jairrs.me'
+baseURL = 'https://jairrs.vercel.app'
 languageCode = 'en-us'
-title = 'jairrs.website'
+title = 'jairrs'
 theme = 'PaperMod'
+pagination.pagerSize = 10
+
+# Pretty URLs / nicer feeds
+enableRobotsTXT = true
+
+[outputs]
+    home = ["HTML", "RSS", "JSON"]
 
 [params]
     env = 'production'
     author = "jairrs"
-    title = "Jair Santana"
     description = "CS Major @ University | Full-stack & Systems"
-    
-    [params.profileMode]
-        enabled = true
-        title = "Hi, I'm Jair"
-        subtitle = "TODO"
-        imageUrl = "url-to-your-photo.jpg"
-        [[params.profileMode.buttons]]
-            name = "Projects"
-            url = "projects"
-        [[params.profileMode.buttons]]
-            name = "Blog"
-            url = "posts"
+
+    DateFormat = "Jan 2, 2006"
+    defaultTheme = "dark"
+    disableThemeToggle = false
+    disableScrollToTop = true
+    disableSpecial1stPost = true
+    ShowReadingTime = true
+    ShowWordCount = false
+    hideAuthor = true
+    ShowShareButtons = false
+    ShowPostNavLinks = true
+    ShowBreadCrumbs = false
+    ShowCodeCopyButtons = true
+    ShowFullTextinRSS = true
+    ShowToc = true
+    mainSections = ["posts"]
+
+    [params.label]
+        text = "jair"
+
+    # Empty homeInfoParams forces PaperMod's list.html to skip profileMode
+    # and render the post list directly on the home page.
+    [params.homeInfoParams]
+        Title = ""
+        Content = ""
+
+    [params.assets]
+        disableHLJS = true
+        disableFingerprinting = false
+
+    [params.footer]
+        hideCopyright = true
 
     [[params.socialIcons]]
         name = "github"
@@ -27,3 +53,31 @@ theme = 'PaperMod'
     [[params.socialIcons]]
         name = "linkedin"
         url = "https://linkedin.com/in/jairrs"
+    [[params.socialIcons]]
+        name = "Rss"
+        url = "/index.xml"
+
+[menu]
+    [[menu.main]]
+        identifier = "blog"
+        name = "blog"
+        url = "/"
+        weight = 10
+    [[menu.main]]
+        identifier = "about"
+        name = "about"
+        url = "/about/"
+        weight = 20
+
+[markup]
+    [markup.highlight]
+        codeFences = true
+        guessSyntax = true
+        lineNos = false
+        style = "github-dark"
+    [markup.goldmark.renderer]
+        unsafe = true
+    [markup.tableOfContents]
+        startLevel = 2
+        endLevel = 3
+        ordered = false

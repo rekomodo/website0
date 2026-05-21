@@ -1,0 +1,96 @@
+{{- define "main" }}
+
+{{- /* Section / term page header (e.g. /posts/, /projects/, tag pages).
+       The home page intentionally has no header text — it goes straight
+       into the post list, like samcurry.net. */ -}}
+{{- if not .IsHome | and .Title }}
+<header class="page-header">
+  <h1>{{ .Title }}</h1>
+  {{- if .Description }}
+  <div class="post-description">{{ .Description | markdownify }}</div>
+  {{- end }}
+</header>
+{{- end }}
+
+{{- if .Content }}
+<div class="post-content">
+  {{- if not (.Param "disableAnchoredHeadings") }}
+  {{- partial "anchored_headings.html" .Content -}}
+  {{- else }}{{ .Content }}{{ end }}
+</div>
+{{- end }}
+
+{{- $pages := union .RegularPages .Sections }}
+
+{{- if .IsHome }}
+{{- $pages = where site.RegularPages "Type" "in" site.Params.mainSections }}
+{{- $pages = where $pages "Params.hiddenInHomeList" "!=" "true" }}
+{{- end }}
+
+{{- $paginator := .Paginate $pages }}
+
+<div class="post-list">
+{{- range $paginator.Pages }}
+  {{- $cover := .Params.cover.image }}
+  {{- $coverImg := "" }}
+  {{- if $cover }}
+    {{- $match := printf "*%s*" $cover }}
+    {{- with (.Resources.ByType "image").GetMatch $match }}
+      {{- $coverImg = .RelPermalink }}
+    {{- else }}
+      {{- with (resources.ByType "image").GetMatch $match }}
+        {{- $coverImg = .RelPermalink }}
+      {{- else }}
+        {{- $coverImg = $cover | relURL }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+  <article class="post-entry">
+    <a class="post-entry-link" href="{{ .RelPermalink }}">
+      <div class="post-entry-cover{{ if not $coverImg }} post-entry-cover--placeholder{{ end }}"
+        {{- if $coverImg }} aria-hidden="true"{{- end }}>
+        {{- if $coverImg }}
+        <img src="{{ $coverImg }}" alt="{{ .Params.cover.alt | default .Title | plainify }}" loading="lazy"
+          onerror="this.remove();this.parentNode.classList.add('post-entry-cover--placeholder');">
+        {{- end }}
+      </div>
+      <div class="post-entry-body">
+        <h2 class="post-entry-title">
+          {{- .Title -}}
+          {{- if .Draft }}<span class="entry-hint" title="Draft"> [draft]</span>{{- end }}
+        </h2>
+        <p class="post-entry-meta">
+          {{- partial "post_meta.html" . -}}
+        </p>
+        {{- if (ne (.Param "hideSummary") true) }}
+        <p class="post-entry-summary">
+          {{- .Summary | plainify | htmlUnescape -}}{{ if .Truncated }}...{{ end }}
+        </p>
+        {{- end }}
+      </div>
+    </a>
+  </article>
+{{- end }}
+</div>
+
+{{- if gt $paginator.TotalPages 1 }}
+<footer class="page-footer">
+  <nav class="pagination">
+    {{- if $paginator.HasPrev }}
+    <a class="prev" href="{{ $paginator.Prev.URL | relURL }}">&larr;&nbsp;Newer</a>
+    {{- else }}
+    <span class="prev disabled" aria-hidden="true">&larr;&nbsp;Newer</span>
+    {{- end }}
+    <span class="page-count">
+      {{- $paginator.PageNumber }}&nbsp;/&nbsp;{{ $paginator.TotalPages -}}
+    </span>
+    {{- if $paginator.HasNext }}
+    <a class="next" href="{{ $paginator.Next.URL | relURL }}">Older&nbsp;&rarr;</a>
+    {{- else }}
+    <span class="next disabled" aria-hidden="true">Older&nbsp;&rarr;</span>
+    {{- end }}
+  </nav>
+</footer>
+{{- end }}
+
+{{- end }}{{- /* end main */ -}}

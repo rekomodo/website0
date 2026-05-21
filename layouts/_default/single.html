@@ -1,0 +1,97 @@
+{{- define "main" }}
+
+{{- $label_text := (site.Params.label.text | default site.Title) }}
+{{- $home := "" | relLangURL }}
+{{- $blog_url := "/" | relLangURL }}
+{{- /* Sidebar + back-link only render on blog/post pages, not on
+       stand-alone pages like /about/. */ -}}
+{{- $is_post := and .IsPage (in site.Params.mainSections .Section) }}
+
+{{- if $is_post }}
+{{- /* ----------------------------------------------------------------
+       Sidebar — site nav + table of contents.
+       Fixed to the left of the article on wide screens (>= 1280px).
+       Hidden on smaller screens (the article gets a "Back to blog"
+       link at the top instead).
+   ---------------------------------------------------------------- */ -}}
+<aside class="post-aside" aria-label="post navigation">
+    <a class="post-aside-home" href="{{ $home }}">
+        {{- if site.Params.label.icon }}
+        <span class="post-aside-icon">
+            <img src="{{ site.Params.label.icon | relURL }}" alt="" width="20" height="20">
+        </span>
+        {{- else }}
+        <span class="post-aside-icon post-aside-icon--placeholder"></span>
+        {{- end }}
+        <span>{{ $label_text }}</span>
+    </a>
+    {{- with .TableOfContents }}
+    <div class="post-aside-toc">
+        {{ . }}
+    </div>
+    {{- end }}
+</aside>
+{{- end }}
+
+<article class="post-single{{ if not $is_post }} post-single--plain{{ end }}">
+
+    {{- if $is_post }}
+    {{- /* "Back to blog" link — only visible on screens narrower than the
+           sidebar breakpoint. */ -}}
+    <a class="post-back-link" href="{{ $blog_url }}">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <span>Back to blog</span>
+    </a>
+    {{- end }}
+
+    <header class="post-header">
+        <h1 class="post-title">
+            {{- .Title -}}
+            {{- if .Draft }}<span class="entry-hint" title="Draft"> [draft]</span>{{- end }}
+        </h1>
+        {{- if not .Date.IsZero }}
+        <time class="post-date" datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+            {{- .Date | time.Format "January 2, 2006" -}}
+        </time>
+        {{- end }}
+        {{- if .Description }}
+        <p class="post-description">{{ .Description }}</p>
+        {{- end }}
+    </header>
+
+    {{- $isHidden := (.Param "cover.hiddenInSingle") | default (.Param "cover.hidden") | default false }}
+    {{- if and .Params.cover.image (not $isHidden) }}
+    {{- partial "cover.html" (dict "cxt" . "IsSingle" true "isHidden" $isHidden) }}
+    {{- end }}
+
+    {{- if .Content }}
+    <div class="post-content">
+        {{- if not (.Param "disableAnchoredHeadings") }}
+        {{- partial "anchored_headings.html" .Content -}}
+        {{- else }}{{ .Content }}{{ end }}
+    </div>
+    {{- end }}
+
+    <footer class="post-footer">
+        {{- $tags := .Language.Params.Taxonomies.tag | default "tags" }}
+        {{- with ($.GetTerms $tags) }}
+        <ul class="post-tags">
+            {{- range . }}
+            <li><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></li>
+            {{- end }}
+        </ul>
+        {{- end }}
+        {{- if (.Param "ShowPostNavLinks") }}
+        {{- partial "post_nav_links.html" . }}
+        {{- end }}
+    </footer>
+
+    {{- if (.Param "comments") }}
+    {{- partial "comments.html" . }}
+    {{- end }}
+</article>
+
+{{- end }}{{- /* end main */ -}}
