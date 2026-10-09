@@ -81,3 +81,9 @@ enableRobotsTXT = true
         startLevel = 2
         endLevel = 3
         ordered = false
+
+[markup.goldmark.extensions.passthrough]
+    enable = true
+    [markup.goldmark.extensions.passthrough.delimiters]
+        block = [['\[', '\]']]
+        inline = [['\(', '\)']]

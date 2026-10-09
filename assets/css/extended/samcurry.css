@@ -805,3 +805,18 @@ body {
     .site-head-link { font-size: 14px; }
     .post-title { font-size: 26px; }
 }
+
+/* Typeset equations, with room for fractions and safe scrolling on phones. */
+.post-content math {
+    font-family: "STIX Two Math", "Cambria Math", math;
+    font-size: 1.08em;
+}
+
+.post-content math[display="block"] {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    margin: 1.6em 0;
+    padding: 0.5em 0;
+}
