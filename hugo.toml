@@ -2,7 +2,7 @@ baseURL = 'https://jairsantana.com/'
 languageCode = 'en-us'
 title = 'jairrs'
 theme = 'PaperMod'
-pagination.pagerSize = 10
+pagination.pagerSize = 5
 
 # Pretty URLs / nicer feeds
 enableRobotsTXT = true
@@ -24,7 +24,7 @@ enableRobotsTXT = true
     ShowWordCount = false
     hideAuthor = true
     ShowShareButtons = false
-    ShowPostNavLinks = true
+    ShowPostNavLinks = false
     ShowBreadCrumbs = false
     ShowCodeCopyButtons = true
     ShowFullTextinRSS = true

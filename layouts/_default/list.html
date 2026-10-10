@@ -60,7 +60,8 @@
           {{- if .Draft }}<span class="entry-hint" title="Draft"> [draft]</span>{{- end }}
         </h2>
         <p class="post-entry-meta">
-          {{- partial "post_meta.html" . -}}
+          <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date | time.Format site.Params.DateFormat }}</time>
+          {{- if .Param "ShowReadingTime" }}<span aria-hidden="true"> · </span><span>{{ .ReadingTime }} min read</span>{{- end }}
         </p>
         {{- if (ne (.Param "hideSummary") true) }}
         <p class="post-entry-summary">
@@ -73,24 +74,23 @@
 {{- end }}
 </div>
 
-{{- if gt $paginator.TotalPages 1 }}
 <footer class="page-footer">
-  <nav class="pagination">
+  {{- if not (.Param "hideFooter") }}
+  {{ partial "footer_links.html" . }}
+  {{- end }}
+  <nav class="pagination" aria-label="Pagination">
     {{- if $paginator.HasPrev }}
-    <a class="prev" href="{{ $paginator.Prev.URL | relURL }}">&larr;&nbsp;Newer</a>
+    <a class="prev" href="{{ $paginator.Prev.URL | relURL }}">&larr; Newer</a>
     {{- else }}
-    <span class="prev disabled" aria-hidden="true">&larr;&nbsp;Newer</span>
+    <span class="prev disabled" aria-hidden="true">&larr; Newer</span>
     {{- end }}
-    <span class="page-count">
-      {{- $paginator.PageNumber }}&nbsp;/&nbsp;{{ $paginator.TotalPages -}}
-    </span>
+    <span class="page-count" aria-label="Page {{ $paginator.PageNumber }} of {{ $paginator.TotalPages }}">{{ $paginator.PageNumber }} / {{ $paginator.TotalPages }}</span>
     {{- if $paginator.HasNext }}
-    <a class="next" href="{{ $paginator.Next.URL | relURL }}">Older&nbsp;&rarr;</a>
+    <a class="next" href="{{ $paginator.Next.URL | relURL }}">Older &rarr;</a>
     {{- else }}
-    <span class="next disabled" aria-hidden="true">Older&nbsp;&rarr;</span>
+    <span class="next disabled" aria-hidden="true">Older &rarr;</span>
     {{- end }}
   </nav>
 </footer>
-{{- end }}
 
-{{- end }}{{- /* end main */ -}}
+{{- end }}
