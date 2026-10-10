@@ -1,0 +1,4 @@
+{{- if .HasShortcode "grass-demo" -}}
+{{- $script := resources.Get "js/grass-demos.js" | minify | fingerprint -}}
+<script defer src="{{ $script.RelPermalink }}"></script>
+{{- end -}}

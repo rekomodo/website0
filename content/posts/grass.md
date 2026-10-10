@@ -75,7 +75,9 @@ To emulate wind we can "scroll" a wind texture across the field of grass. We eff
 
 I use Perlin noise for the scrolling wind texture because its values change smoothly: nearby values are similar. This means neighboring blades get similar wind strength and direction, so the grass moves together instead of each blade jittering as we scroll the wind texture. Feel free to experiment with other kinds of noise. I generated the texture with Godot's FastNoiseLite library. I enabled domain warping for a more interesting wind pattern and made the texture seamless to avoid strange patterns when scrolling across the edges.
 
-I sample the Perlin noise texture relative to the blade's location twice: once for wind strength and another for orientation samples. Further along the blade, the texture is sampled a bit ahead in time, emulating turbulence. The amount of bend also increases towards the tip.
+I sample the Perlin noise texture relative to the blade's location twice: once for wind strength and another for orientation samples. Further along the blade, the texture is sampled faster in time, emulating turbulence. The amount of bend also increases towards the tip.
+
+{{< grass-demo kind="wind" title="3D wind scrolling demonstration" caption="A simplified tile of grass sampling a seamless Perlin wind texture. Use the slider to scroll the texture and watch the blades respond." >}}
 
 {{< details title="Technical details: wind, rotation, and bending" >}}
 
@@ -132,6 +134,8 @@ I use cellular noise for the grass clump texture. Nearby values cluster together
 
 {{< figure src="/images/grass/cellular-noise.png" alt="Grayscale cellular noise texture with clusters of similar values" caption="Clusters of similar gray values give neighboring blades similar sizes and shapes, creating clumps." >}}
 
+{{< grass-demo kind="clumping" title="3D comparison of random and clumped grass sizes" caption="The left tile uses independent per-blade variation. The right blends those same values with a cellular texture, creating patches of similar blade sizes. Adjust the clumping weight to compare." >}}
+
 {{< details title="Technical details: blade appearance variation" >}}
 
 I use the blade's world position to generate a hash value \(x_p\) in \([0,1]\) and sample the cellular noise texture (or "clump texture") to get a value \(x_c\) in \([0,1]\). I combine these into a variation parameter \(x\), using the clumping weight \(c\) (set to `0.8`). At \(c=0\), each blade uses only its own random value; at \(c=1\), it uses only the clump texture:
@@ -150,7 +154,7 @@ for width and height variation.
 
 The grass blades are simple, flat meshes. We can artificially round them without adding extra geometry by adjusting the angle of normals close to the edge of the blade. By pointing these further outwards we get the illusion of curvature on the flat mesh.
 
-{{< comparison before="/images/grass/rounded-normals-before.png" after="/images/grass/rounded-normals-after.png" beforeLabel="Flat lighting" afterLabel="Rounded lighting" caption="Left: flat lighting. Right: rounding the lighting makes the same flat blades look less like strips of paper." >}}
+{{< grass-demo kind="normals" title="3D comparison of flat and rounded normals" caption="Identical flat blade meshes, with flat normals on the left and rounded normals on the right. Adjust the curvature to see how lighting changes without adding geometry." >}}
 {{< details title="What is a normal?" >}}
 
 The normal vector at a point on a mesh is the vector perpendicular to the surface. Lighting uses it to work out how the surface faces the light. By varying that direction across a flat blade, we can make the lighting behave as if the blade were curved.
@@ -183,7 +187,7 @@ Here, \(\boldsymbol{v}\) is the fragment position in view space, so \(\lVert\bol
 
 To tie it all together, a custom lighting pass simulates ambient bounces and occlusion. I darken the base of the grass based on the field's density, which gives the field more depth.
 
-{{< comparison before="/images/grass/ambient-occlusion-before.png" after="/images/grass/ambient-occlusion-after.png" beforeLabel="Without ambient occlusion" afterLabel="With ambient occlusion" caption="Left: before ambient occlusion. Right: darker bases make the grass look more densely packed and give the field depth." >}}
+{{< grass-demo kind="occlusion" title="3D comparison of grass ambient occlusion" caption="The same tile without ambient occlusion on the left and with density-based base darkening on the right. Move the slider to see how occlusion adds depth." >}}
 {{< details title="What is ambient occlusion?" >}}
 
 Ambient occlusion approximates how nearby surfaces block light from reaching each other. The bases of densely packed grass get less light than the exposed tips. Here, I approximate that with the grass density and the height along the blade in the fragment shader.
@@ -203,6 +207,8 @@ Here, \(\boldsymbol{\alpha}\) is Godot's light attenuation (`ATTENUATION`), \(\b
 
 {{< /details >}}
 ## Results
+
+{{< grass-demo kind="result" title="Animated 3D grass field combining all four techniques" caption="A simplified live WebGL scene combining scrolling wind, clumped blade sizes, rounded normals, and density-based ambient occlusion. The video at the top shows the full Godot implementation." >}}
 
 The result is a field of grass that runs at 60-230 FPS on my test computer, depending on the density. Individual blades are different from each other but remain similar to nearby blades, and the scrolling Perlin noise texture does a pretty good job of emulating wind.
 

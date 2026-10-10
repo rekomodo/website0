@@ -870,3 +870,23 @@ body {
 .post-content .image-comparison figcaption {
     margin-top: 0.8rem;
 }
+
+.post-content .grass-demo {
+    margin: 1.5em 0;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+.grass-demo-labels { display: flex; justify-content: space-around; gap: 1rem; font-size: 0.85em; margin-bottom: 0.6rem; }
+.grass-demo-scene { display: block; width: 100%; height: 300px; border-radius: 6px; }
+.grass-demo-control { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin-top: 1rem; font-size: 0.85em; }
+.grass-demo-control input { flex: 1; min-width: 100px; accent-color: #a7bf72; }
+.grass-demo-control output { min-width: 4ch; font-variant-numeric: tabular-nums; }
+.grass-demo-noise { display: flex; gap: 1rem; align-items: center; font-size: 0.8em; margin-top: 1rem; color: var(--secondary); }
+.grass-demo-noise canvas { width: 128px; height: 128px; border-radius: 4px; }
+.post-content .grass-demo-hint, .post-content .grass-demo-status { font-size: 0.8em; color: var(--secondary); margin: 0.75rem 0; }
+.grass-demo-status:empty { display: none; }
+@media (max-width: 600px) { .grass-demo-scene { height: 230px; } .grass-demo-labels { font-size: 0.75em; } }
+.post-content .grass-demo figcaption { font-weight: 400; font-size: 0.85em; color: var(--secondary); margin-top: 1rem; }
+
+.grass-demo-play { margin-top: 0.75rem; padding: 0.5rem 0.9rem; border: 1px solid var(--border); border-radius: 6px; color: var(--primary); background: var(--entry); cursor: pointer; }

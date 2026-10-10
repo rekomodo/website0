@@ -1,0 +1,15 @@
+{{- $kind := .Get "kind" -}}
+<figure class="grass-demo" data-grass-demo="{{ $kind }}">
+    <div class="grass-demo-labels" aria-hidden="true">
+    {{ if eq $kind "result" }}<span>Wind · clumping · rounded normals · ambient occlusion</span>{{ else if eq $kind "wind" }}<span>One tile · shared wind samples</span>{{ else }}<span>{{ if eq $kind "normals" }}Flat normals{{ else if eq $kind "clumping" }}Independent random sizes{{ else }}Without ambient occlusion{{ end }}</span><span>{{ if eq $kind "normals" }}Rounded normals{{ else if eq $kind "clumping" }}Clump-influenced sizes{{ else }}With ambient occlusion{{ end }}</span>{{ end }}
+    </div>
+    <canvas class="grass-demo-scene" aria-label="{{ .Get "title" }}" role="img"></canvas>
+    {{ if or (eq $kind "wind") (eq $kind "clumping") }}
+    <div class="grass-demo-noise"><canvas aria-label="Noise texture; dots mark blade sampling positions" role="img"></canvas><span>{{ if eq $kind "clumping" }}Cellular texture · each region shares a size value{{ else }}Wind texture · dots mark the same blade positions{{ end }}</span></div>
+    {{ end }}
+    <label class="grass-demo-control"><span>{{ if eq $kind "result" }}Wind speed{{ else if eq $kind "wind" }}Scroll wind texture{{ else if eq $kind "normals" }}Normal curvature{{ else if eq $kind "clumping" }}Clumping weight{{ else }}Grass density / occlusion{{ end }}</span><input type="range" min="0" max="100" value="{{ if eq $kind "result" }}50{{ else if eq $kind "wind" }}0{{ else if eq $kind "clumping" }}80{{ else }}60{{ end }}" aria-label="{{ if eq $kind "result" }}Results wind speed{{ else if eq $kind "wind" }}Wind texture scroll{{ else if eq $kind "normals" }}Normal curvature{{ else if eq $kind "clumping" }}Clumping weight{{ else }}Ambient occlusion strength{{ end }}"><output></output></label>
+    {{ if eq $kind "result" }}<button type="button" class="grass-demo-play">Pause animation</button>{{ end }}
+    <p class="grass-demo-hint">{{ if eq $kind "result" }}A live miniature of the combined approach. Adjust wind speed or pause to inspect the blades.{{ else if eq $kind "wind" }}Move the slider: nearby blades sample similar values and bend together.{{ else if eq $kind "clumping" }}At zero, both tiles match. Increase the weight to give neighboring blades similar sizes; their positions stay fixed.{{ else }}Both tiles use identical blades and lighting. Only {{ if eq $kind "normals" }}the normals change{{ else }}the base darkening changes{{ end }}.{{ end }}</p>
+    <p class="grass-demo-status" role="status"></p>
+    <figcaption>{{ .Get "caption" }}</figcaption>
+</figure>
