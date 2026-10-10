@@ -1,0 +1,13 @@
+<figure class="image-comparison">
+    <div class="image-comparison-grid">
+        <div>
+            <img src="{{ .Get "before" | relURL }}" alt="{{ .Get "beforeLabel" }}" loading="lazy">
+            <p class="image-comparison-label">{{ .Get "beforeLabel" }}</p>
+        </div>
+        <div>
+            <img src="{{ .Get "after" | relURL }}" alt="{{ .Get "afterLabel" }}" loading="lazy">
+            <p class="image-comparison-label">{{ .Get "afterLabel" }}</p>
+        </div>
+    </div>
+    <figcaption>{{ .Get "caption" }}</figcaption>
+</figure>
