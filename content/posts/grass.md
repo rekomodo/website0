@@ -27,7 +27,7 @@ The approach comes down to three main tricks:
 
 - Use GPU Instancing to draw chunks of grass blades together, avoiding millions of separate draw calls.
 - Use moving noise patterns for wind and clusters of similar values to simulate grass clumping.
-- Use color and lighting to make flat blade meshes look rounded and emulate depth-of-field.
+- Use color and lighting to make flat blade meshes look rounded and give the field depth with ambient occlusion.
 
 {{< details title="How Ghost of Tsushima's system works" >}}
 
@@ -75,7 +75,7 @@ To emulate wind we can "scroll" a wind texture across the field of grass. We eff
 
 I use Perlin noise for the scrolling wind texture because its values change smoothly: nearby values are similar. This means neighboring blades get similar wind strength and direction, so the grass moves together instead of each blade jittering as we scroll the wind texture. Feel free to experiment with other kinds of noise. I generated the texture with Godot's FastNoiseLite library. I enabled domain warping for a more interesting wind pattern and made the texture seamless to avoid strange patterns when scrolling across the edges.
 
-I sample the Perlin noise texture relative to the blade's location twice: once for wind strength and another for orientation samples. Further along the blade, the texture is sampled faster in time, emulating turbulence. The amount of bend also increases towards the tip.
+I sample the Perlin noise texture at the same position for the wind's target orientation and rotation strength, then at another position for bending. The bending sample scrolls faster and uses a height-based time offset, so points farther along the blade sample a bit ahead in time, emulating turbulence.
 
 {{< grass-demo kind="wind" title="3D wind scrolling demonstration" caption="A simplified tile of grass sampling a seamless Perlin wind texture. Use the slider to scroll the texture and watch the blades respond." >}}
 
@@ -89,30 +89,34 @@ I sample the Perlin noise texture (or "wind texture") at coordinates \(s_0\), us
 s_0 = c_d\left(w_s(t,t)+\frac{\mathrm{pos}_{\mathrm{world}}}{w_s}\right)
 \]
 
-and multiply the value by \(\pi/2\) to get the wind angle \(w_\theta\). Increasing \(w_s\) makes the wind texture scroll faster. I used \(0.005\) for \(c_d\).
+I multiply the sampled value by \(\pi/2\) to get the wind angle \(w_\theta\). Increasing \(w_s\) makes the wind texture scroll faster. I used \(0.005\) for \(c_d\).
 I compute the blade's initial rotation angle \(\theta_0\) using its repeatable position-based hash \(x_p\) and the sampled clump value \(x_c\), both in \([0,1]\). Here, \(\tau=2\pi\) is a full turn in radians:
 \[
 \theta_0 = \left(\frac{1}{3}x_c+\operatorname{mix}(-0.15,0.15,x_p)\right)\tau
 \]
-and sample a wind strength \(w_f\) from the wind texture at \(s_0\) and multiply it by a factor of \(4/5\). I blend these into the final rotation angle \(\theta\), using \(\operatorname{mix}(a,b,u)=(1-u)a+ub\):
+I also sample a wind strength \(w_f\) from the wind texture at \(s_0\) and multiply it by a factor of \(4/5\). I blend these into the final rotation angle \(\theta\), using \(\operatorname{mix}(a,b,u)=(1-u)a+ub\):
 \[
 \theta = \operatorname{mix}(\theta_0,w_\theta,w_f)
 \]
-is used to generate a rotation matrix about the y-axis \(M_r\).
+This angle is used to generate a rotation matrix about the y-axis \(M_r\).
 
 I use the relative height of the vertex \(h=1-\mathrm{UV}_y\), from `0` at the base to `1` at the tip, to compute an initial bend angle \(\beta_0\). The variation value \(x=(1-c)x_p+cx_c\) combines the blade hash and clump value with clumping weight \(c=0.8\):
 \[
-\beta_0 = h\pi\,\operatorname{mix}\left(\frac{1}{10},\frac{2}{5},x\right)
+\beta_0 = h\pi\,\operatorname{mix}(0.10,0.2x,h)
 \]
-I then sample the wind texture at a second set of coordinates \(s_1\). Here, \(t_h=t+0.25h^2\) offsets the time farther along the blade:
+I then sample the wind texture at a second set of coordinates \(s_1\). Here, \(t_h=t+0.25h^2\) offsets the time farther along the blade. The temporal sampling factor is `0.05`, while the spatial factor remains \(c_d=0.005\):
 \[
-s_1 = c_d^{2/3}w_s(t_h,t_h)+c_dh^2+c_d\frac{\mathrm{pos}_{\mathrm{world}}}{w_s}
+s_1 = 0.05(t_h,t_h)+c_d\frac{\mathrm{pos}_{\mathrm{world}}}{w_s}
 \]
-to get the wind strength for the bend \(w_b\). I compute the final bend angle \(\beta\), with \(q\) combining the per-blade and clump values to vary the bend:
+I call the value sampled here \(w_b\). I remap it from \([0,1]\) to \([0.25,1]\) and square it, then multiply by wind speed and a bend variation factor \(q\). That factor blends a fixed value with the blade's hash using the clump value:
 \[
-\begin{aligned}\beta &= \beta_0+\operatorname{mix}\left(0,\pi,w_sw_bh^2q\right) \\ q &= \operatorname{mix}\left(\frac{1}{10},\frac{1}{10}+\frac{2}{5}x_p,x_c\right)\end{aligned}
+q = \operatorname{mix}(0.1,0.1+0.4x_p,x_c)
 \]
-Here, \(q\) is the bend variation factor. The final bend angle is used to generate a rotation matrix about the x-axis \(M_b\). The extra \(h\)-based factor puts the blade tips a bit ahead in the wind texture, emulating turbulence. Then, I mix up to a constant based on the vertex height so that the blade bends more towards the tip.
+The remapped strength produces the final bend angle \(\beta\):
+\[
+\beta = \beta_0+\pi\,w_s\,q\left[\operatorname{mix}(0.25,1.0,w_b)\right]^2
+\]
+This matches the shader's `mix(0, PI, wind_strength_bend)`, since blending from zero to \(\pi\) is just multiplication by \(\pi\). The angle generates a rotation matrix about the x-axis, \(M_b\). The height-dependent offset puts the blade tips ahead in the wind texture; the additional wind bend itself has no extra \(h^2\) multiplier.
 
 Finally, I apply both rotation matrices to the vertex position \(\boldsymbol{v}\) and the normal:
 \[
@@ -190,7 +194,7 @@ To tie it all together, a custom lighting pass simulates ambient bounces and occ
 {{< grass-demo kind="occlusion" title="3D comparison of grass ambient occlusion" caption="The same tile without ambient occlusion on the left and with density-based base darkening on the right. Move the slider to see how occlusion adds depth." >}}
 {{< details title="What is ambient occlusion?" >}}
 
-Ambient occlusion approximates how nearby surfaces block light from reaching each other. The bases of densely packed grass get less light than the exposed tips. Here, I approximate that with the grass density and the height along the blade in the fragment shader.
+Ambient occlusion approximates how nearby surfaces block light from reaching each other. The bases of densely packed grass get less light than the exposed tips. Here, I approximate that with the grass density and the height along the blade in the lighting function (`light()`).
 
 {{< /details >}}
 {{< details title="Technical details: lighting pass" >}}
@@ -199,7 +203,7 @@ I emulate ambient occlusion using grass density \(d\) and relative height \(h=1-
 \[
 o = \operatorname{mix}\left(1-\frac{3}{4}d,1,h^2\right)
 \]
-and setting the diffuse lighting color to
+I then set the diffuse lighting color to
 \[
 \boldsymbol{\alpha}\,o\,\boldsymbol{l}_c\,2^{\boldsymbol{n}\cdot\boldsymbol{l}-2}
 \]
@@ -210,7 +214,7 @@ Here, \(\boldsymbol{\alpha}\) is Godot's light attenuation (`ATTENUATION`), \(\b
 
 {{< grass-demo kind="result" title="Animated 3D grass field combining all four techniques" caption="A simplified live WebGL scene combining scrolling wind, clumped blade sizes, rounded normals, and density-based ambient occlusion. The video at the top shows the full Godot implementation." >}}
 
-The result is a field of grass that runs at 60-230 FPS on my test computer, depending on the density. Individual blades are different from each other but remain similar to nearby blades, and the scrolling Perlin noise texture does a pretty good job of emulating wind.
+The full Godot implementation shown in the video runs at 60-230 FPS on my test computer, depending on the density. This measurement is for the Godot scene, rather than the simplified browser demo. Individual blades are different from each other but remain similar to nearby blades, and the scrolling Perlin noise texture does a pretty good job of emulating wind.
 
 {{< figure src="/images/grass/result.png" alt="Final grass field over rolling terrain in Godot" caption="The finished field at a density of 0.4, using a terrain heightmap for the demonstration." >}}
 The ground mesh uses an albedo based on the base and tip color, specified density, and distance from the camera.
