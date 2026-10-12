@@ -29,6 +29,7 @@
 
 {{- $isPortfolio := and .IsSection (eq .Section "portfolio") }}
 {{- if $isPortfolio }}
+{{- $pages = union $pages (where site.RegularPages "Params.portfolio" true) }}
 {{- $datedProjects := where $pages "Params.projectDate" "!=" nil }}
 {{- $undatedProjects := where $pages "Params.projectDate" "==" nil }}
 {{- $pages = (sort $datedProjects "Params.projectdate" "desc") | append $undatedProjects }}

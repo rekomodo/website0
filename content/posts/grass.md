@@ -1,6 +1,8 @@
 ---
 title: "Emulating Ghost of Tsushima's Grass in Godot"
 date: 2026-02-28
+portfolio: true
+projectDate: "2026-02-28"
 description: "Procedural grass generation, noise-driven wind and clumping, and custom lighting in Godot."
 tags: ["Computer Graphics", "Godot", "Shaders"]
 cover:
