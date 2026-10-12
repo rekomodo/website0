@@ -859,6 +859,7 @@ body {
 .grass-demo-status:empty { display: none; }
 @media (max-width: 600px) { .grass-demo-scene { height: 230px; } .grass-demo-labels { font-size: 0.75em; } }
 .post-content .grass-demo figcaption { font-weight: 400; font-size: 0.85em; color: var(--secondary); margin-top: 1rem; }
+.post-content .grass-demo-disclaimer { font-size: 0.75em; color: var(--secondary); margin: 0.75rem 0 0; }
 
 .grass-demo-play { margin-top: 0.75rem; padding: 0.5rem 0.9rem; border: 1px solid var(--border); border-radius: 6px; color: var(--primary); background: var(--entry); cursor: pointer; }
 

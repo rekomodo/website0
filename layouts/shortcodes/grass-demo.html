@@ -12,4 +12,5 @@
     <p class="grass-demo-hint">{{ if eq $kind "result" }}A live miniature of the combined approach. Adjust wind speed or pause to inspect the blades.{{ else if eq $kind "wind" }}Move the slider: nearby blades sample similar values and bend together.{{ else if eq $kind "clumping" }}At zero, both tiles match. Increase the weight to give neighboring blades similar sizes; their positions stay fixed.{{ else }}Both tiles use identical blades and lighting. Only {{ if eq $kind "normals" }}the normals change{{ else }}the base darkening changes{{ end }}.{{ end }}</p>
     <p class="grass-demo-status" role="status"></p>
     <figcaption>{{ .Get "caption" }}</figcaption>
+    <p class="grass-demo-disclaimer">This simulation was generated from the project source code using AI.</p>
 </figure>
