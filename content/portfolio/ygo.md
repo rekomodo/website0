@@ -3,6 +3,7 @@ title: "YGo: Peer-to-Peer Collaborative Editing"
 description: "A YATA text CRDT, WebRTC editing, and a Raft-backed Go signaling service."
 summary: "Collaborative text editing with a browser-side CRDT and a replicated backend for room assignment and signaling recovery."
 projectPeriod: "May 2026"
+projectDate: "2026-05-01"
 projectTools: "Go · TypeScript · WebRTC · Raft"
 tags: ["Distributed Systems", "Go", "CRDT", "WebRTC"]
 cover:

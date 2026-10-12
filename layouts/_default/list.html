@@ -27,6 +27,12 @@
 {{- $pages = where $pages "Params.hiddenInHomeList" "!=" "true" }}
 {{- end }}
 
+{{- $isPortfolio := and .IsSection (eq .Section "portfolio") }}
+{{- if $isPortfolio }}
+{{- $pages = sort $pages "Params.projectDate" "desc" }}
+{{- end }}
+{{- $previousLabel := "Newer" }}
+{{- $nextLabel := "Older" }}
 {{- $paginator := .Paginate $pages }}
 
 <div class="post-list">
@@ -84,15 +90,15 @@
   {{- end }}
   <nav class="pagination" aria-label="Pagination">
     {{- if $paginator.HasPrev }}
-    <a class="prev" href="{{ $paginator.Prev.URL | relURL }}">&larr; Newer</a>
+    <a class="prev" href="{{ $paginator.Prev.URL | relURL }}">&larr; {{ $previousLabel }}</a>
     {{- else }}
-    <span class="prev disabled" aria-hidden="true">&larr; Newer</span>
+    <span class="prev disabled" aria-hidden="true">&larr; {{ $previousLabel }}</span>
     {{- end }}
     <span class="page-count" aria-label="Page {{ $paginator.PageNumber }} of {{ $paginator.TotalPages }}">{{ $paginator.PageNumber }} / {{ $paginator.TotalPages }}</span>
     {{- if $paginator.HasNext }}
-    <a class="next" href="{{ $paginator.Next.URL | relURL }}">Older &rarr;</a>
+    <a class="next" href="{{ $paginator.Next.URL | relURL }}">{{ $nextLabel }} &rarr;</a>
     {{- else }}
-    <span class="next disabled" aria-hidden="true">Older &rarr;</span>
+    <span class="next disabled" aria-hidden="true">{{ $nextLabel }} &rarr;</span>
     {{- end }}
   </nav>
 </footer>

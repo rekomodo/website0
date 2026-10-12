@@ -3,6 +3,7 @@ title: "Computer Graphics: Curves, Animation, and Rendering"
 description: "Spline modeling, skeletal deformation, cloth simulation, ray tracing, and shadow mapping in C++ and OpenGL."
 summary: "A collection of graphics assignments exploring how to model shapes, animate them, and turn a scene into an image."
 projectPeriod: "Fall 2025"
+projectDate: "2025-09-01"
 projectTools: "C++ · OpenGL · GLSL · GLM"
 tags: ["Computer Graphics", "C++", "OpenGL", "Simulation"]
 cover:

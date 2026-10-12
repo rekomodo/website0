@@ -2,7 +2,8 @@
 title: "Flock Herder: Interactive Boids on FPGAs"
 description: "Stereo vision, fixed-point motion, and a live camera overlay on a pair of FPGAs."
 summary: "Herding virtual birds with a tracked object, built on two FPGAs with stereo vision and a custom motion pipeline."
-projectPeriod: "December 2025"
+projectPeriod: "November 2025"
+projectDate: "2025-11-01"
 projectTools: "FPGA · Stereo vision"
 tags: ["FPGA", "Digital Systems", "Computer Graphics"]
 cover:
