@@ -5,6 +5,10 @@ summary: "A collection of graphics assignments exploring how to model shapes, an
 projectPeriod: "Fall 2025"
 projectTools: "C++ · OpenGL · GLSL · GLM"
 tags: ["Computer Graphics", "C++", "OpenGL", "Simulation"]
+cover:
+    image: "images/computer-graphics/ray-traced-bunny.png"
+    alt: "Ray-traced Stanford bunny with specular highlights and a cast shadow"
+    hiddenInSingle: true
 draft: false
 showToc: true
 ---
