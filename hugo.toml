@@ -64,6 +64,11 @@ enableRobotsTXT = true
         url = "/"
         weight = 10
     [[menu.main]]
+        identifier = "portfolio"
+        name = "portfolio"
+        url = "/portfolio/"
+        weight = 15
+    [[menu.main]]
         identifier = "about"
         name = "about"
         url = "/about/"

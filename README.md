@@ -22,7 +22,7 @@ The clean build removes stale output for deleted posts. `public/` is generated a
 
 ## Editing
 
-- Posts live in `content/posts/`; About lives in `content/about.md`.
+- Posts live in `content/posts/`; portfolio entries live in `content/portfolio/`; About lives in `content/about.md`.
 - Layout overrides live in `layouts/`; styles are in `assets/css/extended/samcurry.css`.
 - The sun/moon toggle uses `layouts/partials/theme_toggle.html` and `assets/js/theme-toggle.js`.
 - Site settings, menus, and pagination are in `hugo.toml`.

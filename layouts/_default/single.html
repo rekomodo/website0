@@ -2,10 +2,15 @@
 
 {{- $label_text := (site.Params.label.text | default site.Title) }}
 {{- $home := "" | relLangURL }}
-{{- $blog_url := "/" | relLangURL }}
-{{- /* Sidebar + back-link only render on blog/post pages, not on
+{{- $back_url := "/" | relLangURL }}
+{{- $back_label := "Back to blog" }}
+{{- if eq .Section "portfolio" }}
+{{- $back_url = "/portfolio/" | relLangURL }}
+{{- $back_label = "Back to portfolio" }}
+{{- end }}
+{{- /* Sidebar + back-link render on blog and portfolio pages, not on
        stand-alone pages like /about/. */ -}}
-{{- $is_post := and .IsPage (in site.Params.mainSections .Section) }}
+{{- $is_post := and .IsPage (or (in site.Params.mainSections .Section) (eq .Section "portfolio")) }}
 
 {{- if $is_post }}
 {{- /* ----------------------------------------------------------------
@@ -19,6 +24,9 @@
         {{ partial "theme_toggle.html" . }}
         <a class="post-aside-home" href="{{ $home }}">{{ $label_text }}</a>
     </div>
+    {{- if eq .Section "portfolio" }}
+    <a class="post-aside-home" href="{{ $back_url }}">{{ $back_label }}</a>
+    {{- end }}
     {{- if .Param "ShowToc" }}
     {{- with .TableOfContents }}
     <div class="post-aside-toc">
@@ -35,12 +43,12 @@
     {{- /* "Back to blog" link — only visible on screens narrower than the
            sidebar breakpoint. */ -}}
     <div class="post-back-nav">
-    <a class="post-back-link" href="{{ $blog_url }}">
+    <a class="post-back-link" href="{{ $back_url }}">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5"
                 stroke-linecap="round" stroke-linejoin="round"></path>
         </svg>
-        <span>Back to blog</span>
+        <span>{{ $back_label }}</span>
     </a>
     {{ partial "theme_toggle.html" . }}
     </div>
@@ -51,7 +59,9 @@
             {{- .Title -}}
             {{- if .Draft }}<span class="entry-hint" title="Draft"> [draft]</span>{{- end }}
         </h1>
-        {{- if not .Date.IsZero }}
+        {{- if .Params.projectPeriod }}
+        <p class="post-date">{{ .Params.projectPeriod }} · {{ .Params.projectTools }}</p>
+        {{- else if not .Date.IsZero }}
         <time class="post-date" datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
             {{- .Date | time.Format "January 2, 2006" -}}
         </time>

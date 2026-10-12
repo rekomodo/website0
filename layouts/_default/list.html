@@ -60,8 +60,12 @@
           {{- if .Draft }}<span class="entry-hint" title="Draft"> [draft]</span>{{- end }}
         </h2>
         <p class="post-entry-meta">
+          {{- if .Params.projectPeriod }}
+          <span>{{ .Params.projectPeriod }} · {{ .Params.projectTools }}</span>
+          {{- else }}
           <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date | time.Format site.Params.DateFormat }}</time>
           {{- if .Param "ShowReadingTime" }}<span aria-hidden="true"> · </span><span>{{ .ReadingTime }} min read</span>{{- end }}
+          {{- end }}
         </p>
         {{- if (ne (.Param "hideSummary") true) }}
         <p class="post-entry-summary">

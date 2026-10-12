@@ -1,4 +1,4 @@
-{{- $is_post := and .IsPage (in site.Params.mainSections .Section) -}}
+{{- $is_post := and .IsPage (or (in site.Params.mainSections .Section) (eq .Section "portfolio")) -}}
 {{- if not $is_post }}
 <header class="site-head">
     {{ partial "theme_toggle.html" . }}
