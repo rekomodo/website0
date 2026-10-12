@@ -29,7 +29,9 @@
 
 {{- $isPortfolio := and .IsSection (eq .Section "portfolio") }}
 {{- if $isPortfolio }}
-{{- $pages = sort $pages "Params.projectDate" "desc" }}
+{{- $datedProjects := where $pages "Params.projectDate" "!=" nil }}
+{{- $undatedProjects := where $pages "Params.projectDate" "==" nil }}
+{{- $pages = (sort $datedProjects "Params.projectdate" "desc") | append $undatedProjects }}
 {{- end }}
 {{- $previousLabel := "Newer" }}
 {{- $nextLabel := "Older" }}
